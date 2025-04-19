@@ -63,13 +63,33 @@ export default function Sidebar() {
           <nav className="flex flex-col mt-10 space-y-4 px-4">
             <SidebarItem
               icon={<PlusSquare size={22} />}
-              text="Create Post"
+              text="Create Product Post"
               onClick={() => handleNavigation("/Createpost")}
             />
             <SidebarItem
               icon={<FileText size={22} />}
-              text="View Posts"
-              onClick={() => handleNavigation("/Seepost")}
+              text="View Featured Product"
+              onClick={() => handleNavigation("/Featuredpost")}
+            />
+            <SidebarItem
+              icon={<FileText size={22} />}
+              text="View Mens Product"
+              onClick={() => handleNavigation("/Menspost")}
+            />
+            <SidebarItem
+              icon={<FileText size={22} />}
+              text="View kids Product"
+              onClick={() => handleNavigation("/Kidspost")}
+            />
+            <SidebarItem
+              icon={<FileText size={22} />}
+              text="View Ladies Product"
+              onClick={() => handleNavigation("/Ladiespost")}
+            />
+            <SidebarItem
+              icon={<FileText size={22} />}
+              text="View acceserioes"
+              onClick={() => handleNavigation("/Acceserioes")}
             />
             <SidebarItem
               icon={<LogOut size={22} />}
