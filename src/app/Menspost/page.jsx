@@ -1,6 +1,6 @@
 "use client";
 
-import Sidebar from "../../../components/Sidebar";
+import Sidebar from "../../../components/sidebar";
 import { useEffect, useState } from "react";
 import { db } from "../../../utils/firebase";
 import { collection, getDocs } from "firebase/firestore";
