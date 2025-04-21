@@ -3,72 +3,134 @@
 import Sidebar from "../../../components/sidebar";
 import { useEffect, useState } from "react";
 import { db } from "../../../utils/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export default function Accessories() {
-    const [accessories, setAccessories] = useState([]);
+  const [accessories, setAccessories] = useState([]);
 
-    useEffect(() => {
-        const fetchAccessories = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(db, "acceseroies"));
-                const accessoriesData = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                console.log("Accessories", accessoriesData);
-                setAccessories(accessoriesData);
-            } catch (error) {
-                console.error("Error fetching accessories:", error);
+  useEffect(() => {
+    const fetchAccessories = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "acceseroies"));
+        const accessoriesData = querySnapshot.docs.map((doc) => {
+          const docData = doc.data();
+          const images = [];
+
+          for (let i = 1; i <= 5; i++) {
+            if (docData[`image${i}`]) {
+              images.push(docData[`image${i}`]);
             }
-        };
+          }
 
-        fetchAccessories();
-    }, []);
+          return {
+            id: doc.id,
+            ...docData,
+            images,
+          };
+        });
 
-    return (
-        <div className="min-h-screen bg-green-50 flex flex-col md:flex-row">
-            {/* Sidebar */}
-            <div className="w-full md:w-64 bg-white shadow-md">
-                <Sidebar />
-            </div>
+        console.log("Accessories:", accessoriesData);
+        setAccessories(accessoriesData);
 
-            {/* Main Content */}
-            <main className="flex-1 p-6">
-                <h1 className="text-3xl font-bold text-center text-green-700 mb-10">
-                    Accessories Collection
-                </h1>
+        // Optional: store in localStorage
+        localStorage.setItem("accessories", JSON.stringify(accessoriesData));
+      } catch (error) {
+        console.error("Error fetching accessories:", error);
+      }
+    };
 
-                {accessories.length === 0 ? (
-                    <p className="text-center text-gray-600">No accessories available.</p>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {accessories.map((item) => (
-                            <div
-                                key={item.id}
-                                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
-                            >
-                                <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="w-full h-48 object-cover"
-                                />
-                                <div className="p-4">
-                                    <h2 className="text-xl font-semibold text-green-800">
-                                        {item.name}
-                                    </h2>
-                                    <p className="text-gray-600 text-sm mt-2 line-clamp-2">
-                                        {item.description}
-                                    </p>
-                                    <p className="text-lg font-bold text-green-700 mt-3">
-                                        ${item.price}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </main>
+    fetchAccessories();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-green-50 flex flex-col md:flex-row">
+      {/* Sidebar */}
+      <div className="w-full md:w-64 bg-white shadow-md">
+        <Sidebar />
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 p-6">
+        <h1 className="text-3xl font-bold text-center text-green-700 mb-10">
+          Accessories Collection
+        </h1>
+
+        {accessories.length === 0 ? (
+          <p className="text-center text-gray-600">No accessories available.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {accessories.map((item) => (
+              <AccessoryCard key={item.id} product={item} />
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+function AccessoryCard({ product }) {
+  const [mainImage, setMainImage] = useState(product.images[0]);
+
+
+  const handleDelete = async () => {
+    const confirmDelete = confirm("Are you sure you want to delete this product?");
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(db, "acceseroies", product.id));
+      alert("Product deleted successfully!");
+
+      // Optionally refresh or update the UI (e.g., remove from state)
+      window.location.reload(); // or call fetchAccessories() again in parent
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      alert("Failed to delete the product.");
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 p-4 flex flex-col">
+      <img
+        src={mainImage}
+        alt={product.name}
+        className="w-full h-48 object-cover rounded-xl mb-3"
+      />
+
+      {/* Thumbnails */}
+      {product.images.length > 1 && (
+        <div className="flex gap-2 mb-3">
+          {product.images.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`thumbnail-${idx}`}
+              className={`w-10 h-10 rounded border cursor-pointer object-cover ${
+                mainImage === img ? "border-green-600" : "border-gray-300"
+              }`}
+              onClick={() => setMainImage(img)}
+            />
+          ))}
         </div>
-    );
+      )}
+
+      {/* Product Info */}
+      <div className="flex-1">
+        <h2 className="text-lg font-semibold text-green-800">{product.name}</h2>
+        <p className="text-gray-600 text-sm mt-1 line-clamp-3">
+          {product.description}
+        </p>
+      </div>
+
+      <div className="mt-4 flex justify-between items-center">
+        <span className="text-green-700 font-bold text-lg">${product.price}</span>
+        <button
+          onClick={handleDelete}
+          className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  );
 }

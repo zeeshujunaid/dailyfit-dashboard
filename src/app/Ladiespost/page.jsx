@@ -3,7 +3,7 @@
 import Sidebar from "../../../components/sidebar";
 import { useEffect, useState } from "react";
 import { db } from "../../../utils/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
 
 export default function LadiesPost() {
   const [ladiesProducts, setLadiesProducts] = useState([]);
@@ -70,6 +70,22 @@ export default function LadiesPost() {
 function ProductCard({ product }) {
   const [mainImage, setMainImage] = useState(product.images[0]);
 
+  const handleDelete = async () => {
+    const confirmDelete = confirm("Are you sure you want to delete this product?");
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(db, "acceseroies", product.id));
+      alert("Product deleted successfully!");
+
+      // Optionally refresh or update the UI (e.g., remove from state)
+      window.location.reload(); // or call fetchAccessories() again in parent
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      alert("Failed to delete the product.");
+    }
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-4 flex flex-col">
       <img
@@ -103,8 +119,14 @@ function ProductCard({ product }) {
         </p>
       </div>
 
-      <div className="mt-4 text-right">
-        <span className="text-pink-600 font-bold text-lg">${product.price}</span>
+      <div className="mt-4 flex justify-between items-center">
+        <span className="text-green-700 font-bold text-lg">${product.price}</span>
+        <button
+          onClick={handleDelete}
+          className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+        >
+          Delete
+        </button>
       </div>
     </div>
   );
