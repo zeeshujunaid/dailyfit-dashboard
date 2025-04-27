@@ -52,7 +52,7 @@ export default function Accessories() {
       {/* Main Content */}
       <main className="flex-1 p-6">
         <h1 className="text-3xl font-bold text-center text-green-700 mb-10">
-          Accessories Collection
+          Accessories
         </h1>
 
         {accessories.length === 0 ? (
