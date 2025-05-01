@@ -22,10 +22,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-green-100">
+    <div className="flex items-center justify-center h-screen">
       <div className="w-full max-w-sm p-6 bg-white rounded-lg shadow-lg">
-        <h1 className="mb-6 text-3xl font-bold text-center text-green-600">
-          Saylani Quiz App Dashboard
+        <h1 className="mb-6 text-3xl font-bold text-center text-red-600">
+          The <span className="text-gray-800">Daily</span> Fit
         </h1>
 
         <form onSubmit={handleLogin} className="space-y-4">
@@ -63,7 +63,7 @@ export default function Home() {
 
           <button
             type="submit"
-            className="w-full py-2 mt-4 text-white bg-green-500 rounded-md hover:bg-green-600"
+            className="w-full py-2 mt-4 text-gry-800 bg-red-500 rounded-md hover:bg-red-600"
           >
             Login
           </button>

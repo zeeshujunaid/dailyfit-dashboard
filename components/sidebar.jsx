@@ -37,13 +37,13 @@ export default function Sidebar() {
       <div className="relative lg:static">
         {isOpen && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            className="fixed inset-0 h-full bg-opacity-50 z-40 lg:hidden"
             onClick={closeSidebar}
           ></div>
         )}
 
         <div
-          className={`fixed top-0 left-0 h-180 bg-gray-900 text-white w-64 z-50 shadow-lg transform transition-transform duration-300 
+          className={`fixed top-0 left-0 h-full bg-gray-900 text-white w-64 z-50 shadow-lg transform transition-transform duration-300 
           ${isOpen ? "translate-x-0" : "-translate-x-full"} 
           lg:translate-x-0 lg:static lg:block`}
         >
@@ -60,11 +60,16 @@ export default function Sidebar() {
             </h1>
           </div>
 
-          <nav className="flex flex-col mt-10 space-y-4 px-4">
+          <nav className="flex flex-col mt-8 space-y-4 px-4">
             <SidebarItem
               icon={<PlusSquare size={22} />}
               text="Create Product Post"
               onClick={() => handleNavigation("/Createpost")}
+            />
+            <SidebarItem
+              icon={<FileText size={22} />}
+              text="View orders"
+              onClick={() => handleNavigation("/Orders")}
             />
             <SidebarItem
               icon={<FileText size={22} />}
